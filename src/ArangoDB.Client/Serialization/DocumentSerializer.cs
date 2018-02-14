@@ -3,12 +3,9 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using ArangoDB.Client.Data;
 using ArangoDB.Client.Serialization.Converters;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Serialization
 {
@@ -42,7 +39,6 @@ namespace ArangoDB.Client.Serialization
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new ArangoJsonTextReader(streamReader))
             {
-                var serializer = CreateJsonSerializer();
                 return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult);
             }
         }
@@ -52,7 +48,6 @@ namespace ArangoDB.Client.Serialization
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new ArangoJsonTextReader(streamReader))
             {
-                var serializer = CreateJsonSerializer();
                 return new DocumentParser(db).ParseBatchResult<T>(jsonReader, out baseResult).FirstOrDefault();
             }
         }
@@ -68,7 +63,6 @@ namespace ArangoDB.Client.Serialization
 
         public T DeserializeSingleResult<T>(JsonTextReader reader, out JObject jObject)
         {
-            var serializer = CreateJsonSerializer();
             return new DocumentParser(db).ParseSingleResult<T>(reader, out jObject);
         }
 
