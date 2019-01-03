@@ -50,7 +50,7 @@ namespace ArangoDB.Client.Serialization
 
                 p.PropertyName = sharedSetting.Collection.ResolvePropertyName(type, p.UnderlyingName);
 
-                if (p.PropertyName == "_key" || p.PropertyName == "_id" || p.PropertyName == "_rev")
+                if (ArangoAttributes.IsDocumentSystemAttribute(p.PropertyName))
                     p.NullValueHandling = NullValueHandling.Ignore;
 
                 convertedProperties.Add(p);

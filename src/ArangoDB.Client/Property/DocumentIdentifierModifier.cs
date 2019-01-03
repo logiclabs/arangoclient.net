@@ -84,19 +84,19 @@ namespace ArangoDB.Client.Property
 
                     switch (resolvedName)
                     {
-                        case "_key":
+                        case ArangoAttributes.Key:
                             identifierMethod.SetKey = BuildSetAccessor(type, m.Name);
                             break;
-                        case "_id":
+                        case ArangoAttributes.Id:
                             identifierMethod.SetHandle = BuildSetAccessor(type, m.Name);
                             break;
-                        case "_rev":
+                        case ArangoAttributes.Revision:
                             identifierMethod.SetRevision = BuildSetAccessor(type, m.Name);
                             break;
-                        case "_from":
+                        case ArangoAttributes.EdgeFrom:
                             identifierMethod.SetFrom = BuildSetAccessor(type, m.Name);
                             break;
-                        case "_to":
+                        case ArangoAttributes.EdgeTo:
                             identifierMethod.SetTo = BuildSetAccessor(type, m.Name);
                             break;
                     }

@@ -1,12 +1,7 @@
-﻿using Newtonsoft.Json;
-using ArangoDB.Client.Utility;
+﻿using ArangoDB.Client.Utility;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Property
 {
@@ -135,22 +130,9 @@ namespace ArangoDB.Client.Property
             /*************   defined setting   **************/
 
             // * return defined setting identifier
-            if (documentProperty.Identifier != IdentifierType.None)
-            {
-                switch (documentProperty.Identifier)
-                {
-                    case IdentifierType.Key:
-                        return "_key";
-                    case IdentifierType.Handle:
-                        return "_id";
-                    case IdentifierType.Revision:
-                        return "_rev";
-                    case IdentifierType.EdgeFrom:
-                        return "_from";
-                    case IdentifierType.EdgeTo:
-                        return "_to";
-                }
-            }
+            var docAttributeName = documentProperty.Identifier.ToAttributeName();
+            if (docAttributeName != null)
+                return docAttributeName;
 
             // * return defined setting name 
             if (documentProperty.PropertyName != null)
@@ -166,24 +148,10 @@ namespace ArangoDB.Client.Property
 
             if (attributeProperty != null)
             {
-
                 // * return attribute setting identifier
-                if (attributeProperty.Identifier != IdentifierType.None)
-                {
-                    switch (attributeProperty.Identifier)
-                    {
-                        case IdentifierType.Key:
-                            return "_key";
-                        case IdentifierType.Handle:
-                            return "_id";
-                        case IdentifierType.Revision:
-                            return "_rev";
-                        case IdentifierType.EdgeFrom:
-                            return "_from";
-                        case IdentifierType.EdgeTo:
-                            return "_to";
-                    }
-                }
+                var attributeName = attributeProperty.Identifier.ToAttributeName();
+                if (attributeName != null)
+                    return attributeName;
 
                 // * return defined setting name 
                 if (attributeProperty.PropertyName != null)
@@ -196,38 +164,14 @@ namespace ArangoDB.Client.Property
             }
 
             /*************   default identifer setting for type   **************/
+            var allIdentifierTypes = ArangoAttributes.GetAllIdentifierTypes();
 
-            if (FindIdentifierDefaultNameForType(type, IdentifierType.EdgeFrom, memberName))
-                return "_from";
-            if (FindIdentifierDefaultNameForType(type, IdentifierType.EdgeTo, memberName))
-                return "_to";
-            if (FindIdentifierDefaultNameForType(type, IdentifierType.Handle, memberName))
-                return "_id";
-            if (FindIdentifierDefaultNameForType(type, IdentifierType.Revision, memberName))
-                return "_rev";
-            if (FindIdentifierDefaultNameForType(type, IdentifierType.Key, memberName))
-                return "_key";
-
-            /*************   default identifer setting   **************/
-
-            // * return defined default identifier name
             string defaultName = null;
-            if (defaultIdentifierNames.TryGetValue(IdentifierType.EdgeFrom, out defaultName))
-                if (defaultName == memberName)
-                    return "_from";
-            if (defaultIdentifierNames.TryGetValue(IdentifierType.EdgeTo, out defaultName))
-                if (defaultName == memberName)
-                    return "_to";
-            if (defaultIdentifierNames.TryGetValue(IdentifierType.Handle, out defaultName))
-                if (defaultName == memberName)
-                    return "_id";
-            if (defaultIdentifierNames.TryGetValue(IdentifierType.Key, out defaultName))
-                if (defaultName == memberName)
-                    return "_key";
-            if (defaultIdentifierNames.TryGetValue(IdentifierType.Revision, out defaultName))
-                if (defaultName == memberName)
-                    return "_rev";
-
+            foreach (IdentifierType idType in allIdentifierTypes)
+                if (FindIdentifierDefaultNameForType(type, idType, memberName) 
+                    || (defaultIdentifierNames.TryGetValue(idType, out defaultName) && defaultName == memberName))
+                    return idType.ToAttributeName();
+ 
             /*************   collection setting   **************/
 
             ICollectionPropertySetting collectionProperty = null;

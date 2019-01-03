@@ -103,20 +103,20 @@ namespace ArangoDB.Client.ChangeTracking
         {
             DocumentContainer container = new DocumentContainer();
 
-            container.Id = jObject.Value<string>("_id");
+            container.Id = jObject.Value<string>(ArangoAttributes.Id);
             if (container.Id == null)
                 return null;
 
-            container.Key = jObject.Value<string>("_key");
+            container.Key = jObject.Value<string>(ArangoAttributes.Key);
             if (container.Key == null)
                 return null;
 
-            container.Rev = jObject.Value<string>("_rev");
+            container.Rev = jObject.Value<string>(ArangoAttributes.Revision);
             if (container.Rev == null)
                 return null;
 
-            container.From = jObject.Value<string>("_from");
-            container.To = jObject.Value<string>("_to");
+            container.From = jObject.Value<string>(ArangoAttributes.EdgeFrom);
+            container.To = jObject.Value<string>(ArangoAttributes.EdgeTo);
 
             container.Document = jObject;
 
@@ -149,7 +149,7 @@ namespace ArangoDB.Client.ChangeTracking
 
             foreach (var n in newObject)
             {
-                if (!handleInnerObjects && (n.Key == "_id" || n.Key == "_key" || n.Key == "_rev" || n.Key == "_from" || n.Key == "_to"))
+                if (!handleInnerObjects && ArangoAttributes.IsSystemAttribute(n.Key))
                     continue;
 
                 JToken newValue = n.Value;
