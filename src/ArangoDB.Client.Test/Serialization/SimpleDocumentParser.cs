@@ -24,7 +24,7 @@ namespace ArangoDB.Client.Test.Serialization
         }
 
 
-        public void ParseSingleResult<T>(string value, Action<JObject, T> assert)
+        protected void ParseSingleResult<T>(string value, Action<JObject, T> assert)
         {
             using (var reader = GenerateReader(value))
             {
